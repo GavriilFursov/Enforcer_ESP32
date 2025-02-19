@@ -8,6 +8,7 @@ const float DRUM_DIAMETR = 2.5;
 const int POT_TURNS = 10;
 const float REDUCTION_RATIO_DRUM = 2.5;
 const float CIRCUM_LENGTH = PI * DRUM_DIAMETR;
+const float MIN_LENGTH = 73.0;
 
 // Показания ДУП фильтрованное
 int getAngleADC(){

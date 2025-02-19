@@ -5,7 +5,6 @@
 const int STEP = 1000;
 const int REDUCTION_RATIO = 20; 
 const int STEPS_PER_CM = (STEP * REDUCTION_RATIO) / CIRCUM_LENGTH; // Количество импульсов на см
-const float MIN_LENGTH = 15.0;
 
 AccelStepper stepper(AccelStepper::DRIVER, PIN_MOTOR_STEP, PIN_MOTOR_DIR);
 
@@ -15,11 +14,11 @@ int getMotorPulseCount() {
   int _targetLength;
 
   if (isUp) {
-    if(_currentLength < MIN_LENGTH + 17.5) return 0;
-    else _targetLength = MIN_LENGTH + 10;
+    if(_currentLength < MIN_LENGTH + 10) return 0;
+    else _targetLength = MIN_LENGTH;
   } else if (isDown) {
-    if(_currentLength > travel_distance - 15) return 0;
-    else _targetLength = travel_distance - 10;
+    if(_currentLength > travel_distance - 10) return 0;
+    else _targetLength = travel_distance + 10;
   } else {
     return 0;
   }
@@ -74,6 +73,7 @@ void mainControl() {
           ledUp.turnOff();
           ledDown.turnOff();
           ledBody.turnOff();
+          saveSettings();
         }
       } else {
         if (modeChanged) {
@@ -89,7 +89,7 @@ void mainControl() {
   else{
     ledUp.blink();
     ledDown.blink();
-    ledBody.turnOff();
+    ledBody.fastBlink();
     digitalWrite(PIN_POWER_RELAY, LOW);
   }
 }

@@ -27,13 +27,12 @@ const int ADC_MAX_VALUE = pow(2, ADC_RESOLUTION) - 1;    // Максимальн
 #define PIN_POWER_RELAY             1           // Реле питания
 
 void setupPins(){
-    // pinMode(PIN_SENSOR_ANGLE, INPUT);
-    // pinMode(PIN_SENSOR_LIGHT, INPUT);
-    // pinMode(PIN_SENSOR_CHECK_ERROR, INPUT);
-    // pinMode(PIN_SENSOR_VOLTAGE, INPUT);
-    // pinMode(PIN_LED_BODY, OUTPUT);
-    // pinMode(PIN_POWER_RELAY, OUTPUT);
+    pinMode(PIN_SENSOR_ANGLE, INPUT);
+    pinMode(PIN_SENSOR_LIGHT, INPUT);
+    pinMode(PIN_SENSOR_CHECK_ERROR, INPUT);
+    pinMode(PIN_SENSOR_VOLTAGE, INPUT);
+    pinMode(PIN_LED_BODY, OUTPUT);
+    pinMode(PIN_POWER_RELAY, OUTPUT);
 
     analogReadResolution(ADC_RESOLUTION);
-    // analogWriteResolution(10);
 }

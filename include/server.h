@@ -3,9 +3,9 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include "SPIFFS.h"
-#include <cstdlib>       
-#include <ArduinoJson.h> 
-#include <ESPmDNS.h>     
+#include <cstdlib>
+#include <ArduinoJson.h>
+#include <ESPmDNS.h>
 
 // ----- Настройки сети -----
 const char *ssid = "MyESP32AP";
@@ -64,6 +64,10 @@ void loadSettings()
             {
                 speed = doc["speed"].as<float>();
             }
+            if (doc.containsKey("runtime"))
+            {
+                startTime = millis() - (doc["runtime"].as<unsigned long>() * 1000);
+            }
         }
         else
         {
@@ -78,6 +82,7 @@ void saveSettings()
     DynamicJsonDocument doc(1024);
     doc["travel_distance"] = travel_distance;
     doc["speed"] = speed;
+    doc["runtime"] = (millis() - startTime) / 1000; // Сохраняем время работы в секундах
     File file = SPIFFS.open(settings_file, "w");
     if (!file)
     {
@@ -182,7 +187,7 @@ String getWebPage(String currentUri, String message = "", bool success = false)
     }
     else if (currentUri == "/system_data")
     {
-        htmlPage += R"=====(<div class='content'><h2>Показания системы</h2><div class='data-line'><span class='data-item'>Аккумулятор:</span><span class='data-item' id='battery_data'></span></div><div class='data-line'></span></div><div class='data-line'><span class='data-item'>Температура:</span><span class='data-item' id='temperature_data'></span></div><div class='data-line'><span class='data-item'>Освещенность:</span><span class='data-item' id='light_data'></span></div><div class='data-line'><span class='data-item'>Вытяжка троса:</span><span class='data-item' id='cable_data'></span></div><div class='data-line'><span class='data-item'>Время работы:</span><span class='data-item' id='runtime_data'></span></div></div>)=====";
+        htmlPage += R"=====(<div class='content'><h2>Показания системы</h2><div class='data-line'><span class='data-item'>Аккумулятор:</span><span class='data-item' id='battery_data'></span></div><div class='data-line'></span></div><div class='data-line'><span class='data-item'>Температура:</span><span class='data-item' id='temperature_data'></span></div><div class='data-line'><span class='data-item'>Освещенность:</span><span class='data-item' id='light_data'></span></div><div class='data-line'><span class='data-item'>Вытяжка троса:</span><span class='data-item' id='cable_data'></span></div></div>)=====";
     }
     else if (currentUri == "/system_settings")
     {
@@ -229,6 +234,18 @@ String getWebPage(String currentUri, String message = "", bool success = false)
                 }
                 htmlPage += R"=====(</p>)=====";
             }
+
+            // Добавляем отображение времени работы
+            unsigned long runtimeSeconds = (millis() - startTime) / 1000;
+            unsigned int hours = runtimeSeconds / 3600;
+            unsigned int minutes = (runtimeSeconds % 3600) / 60;
+            unsigned int seconds = runtimeSeconds % 60;
+            char timeBuffer[20];
+            sprintf(timeBuffer, "%02d:%02d:%02d", hours, minutes, seconds);
+            htmlPage += R"=====(<p>Время работы: )=====";
+            htmlPage += timeBuffer;
+            htmlPage += R"=====(</p>)=====";
+
             htmlPage += R"=====(</div></div>)=====";
         }
     }
@@ -373,7 +390,7 @@ void updateSensorData()
     battery_level = mapf((battery_filer.filtered(analogRead(PIN_SENSOR_VOLTAGE) * 3.3) / ADC_MAX_VALUE), 2.64, 3.03, 0.0, 100.0);
     room_temperature = getOverboardTemp();
     light_level = getLightLevel();
-    cable_extension = map(angle_filer.filtered(getRopeLength()), 15.0 + 17.5, travel_distance - 15 , 0.0, 100.0);
+    cable_extension = map(angle_filer.filtered(getRopeLength()), 15.0 + 17.5, travel_distance - 15, 0.0, 100.0);
 }
 
 // ----- Функция setup (инициализация) -----
