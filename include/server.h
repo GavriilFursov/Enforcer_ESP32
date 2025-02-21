@@ -144,7 +144,6 @@ String getWebPage(String currentUri, String message = "", bool success = false)
                 document.getElementById('temperature_data').innerHTML = data.temperature;
                  document.getElementById('light_data').innerHTML = data.light;
                 document.getElementById('cable_data').innerHTML = data.cable + " %";
-                 document.getElementById('runtime_data').innerHTML = data.runtime;
                 var battery_element = document.getElementById('battery_data');
                   if(data.battery_level >= 75){
                     battery_element.innerHTML = "<img src='/battery_full.png' class='battery-image' alt='Battery Full'>" + data.battery + "%";
@@ -187,7 +186,7 @@ String getWebPage(String currentUri, String message = "", bool success = false)
     }
     else if (currentUri == "/system_data")
     {
-        htmlPage += R"=====(<div class='content'><h2>Показания системы</h2><div class='data-line'><span class='data-item'>Аккумулятор:</span><span class='data-item' id='battery_data'></span></div><div class='data-line'></span></div><div class='data-line'><span class='data-item'>Температура:</span><span class='data-item' id='temperature_data'></span></div><div class='data-line'><span class='data-item'>Освещенность:</span><span class='data-item' id='light_data'></span></div><div class='data-line'><span class='data-item'>Вытяжка троса:</span><span class='data-item' id='cable_data'></span></div></div>)=====";
+       htmlPage += R"=====(<div class='content'><h2>Показания системы</h2><div class='data-line'><span class='data-item'>Аккумулятор:</span><span class='data-item' id='battery_data'></span></div><div class='data-line'><span class='data-item'>Температура:</span><span class='data-item' id='temperature_data'></span></div><div class='data-line'><span class='data-item'>Освещенность:</span><span class='data-item' id='light_data'></span></div><div class='data-line'><span class='data-item'>Вытяжка троса:</span><span class='data-item' id='cable_data'></span></div></div>)=====";
     }
     else if (currentUri == "/system_settings")
     {
