@@ -1,7 +1,6 @@
 #pragma once
 
 #include <OneWire.h>
-// #include <TroykaMQ.h>
 #include <DFilters.h>
 
 const float DRUM_DIAMETR = 2.5;
@@ -57,13 +56,13 @@ float getOverboardTemp(){
 
 void getCheckError(){
     digitalRead(PIN_SENSOR_CHECK_ERROR);
-    if(!digitalRead(PIN_SENSOR_CHECK_ERROR)) isCheckError = true;
+    if(digitalRead(PIN_SENSOR_CHECK_ERROR)) isCheckError = true;
     else isCheckError = false; 
 }   
 
 void getPowerVoltage() {
     float _vin = ((float)analogRead(PIN_SENSOR_VOLTAGE) * 3.3) / ADC_MAX_VALUE;
-    if (_vin < 2.64) {
+    if (_vin < 0.69) {
         isLowVoltage = true;
     } else {
         isLowVoltage = false;

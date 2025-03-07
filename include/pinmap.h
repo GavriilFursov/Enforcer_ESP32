@@ -3,7 +3,6 @@
 #define ADC_RESOLUTION              12
 const int ADC_MAX_VALUE = pow(2, ADC_RESOLUTION) - 1;    // Максимальное значение АЦП
 
-// #define PIN_SENSOR_SMOKE_MQ2        34          // Датчик задымленности + нагреватель
 #define PIN_SENSOR_TEMP             33          // Датчик температуры
 #define PIN_SENSOR_LIGHT            35          // Датчик освещенности
 #define PIN_SENSOR_CHECK_ERROR      21          // Пин для определения ошибки на драйвере

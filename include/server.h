@@ -9,7 +9,7 @@
 
 // ----- Настройки сети -----
 const char *ssid = "MyESP32AP";
-const char *password = "password123";
+const char *password = "12345678";
 const char *host_name = "piranha_esp32";
 
 // ----- Глобальные переменные для хранения данных -----
@@ -227,9 +227,9 @@ String getWebPage(String currentUri, String message = "", bool success = false)
                 htmlPage += R"=====(<p>Скорость подъема: )=====";
                 htmlPage += String(speed);
                 htmlPage += R"=====( см/с)=====";
-                if (speed < 8 || speed > 24)
+                if (speed < 8 || speed > 12)
                 {
-                    htmlPage += R"=====( - Скорость должна быть между 8 и 24 см/с)=====";
+                    htmlPage += R"=====( - Скорость должна быть между 8 и 12 см/с)=====";
                 }
                 htmlPage += R"=====(</p>)=====";
             }
@@ -349,7 +349,7 @@ void handleSaveSettings()
             return;
         }
 
-        if (new_travel_distance < 100 || new_travel_distance > 180 || new_speed < 8 || new_speed > 24)
+        if (new_travel_distance < 100 || new_travel_distance > 180 || new_speed < 8 || new_speed > 12)
         {
 
             if (new_travel_distance < 100 || new_travel_distance > 180)
@@ -358,9 +358,9 @@ void handleSaveSettings()
                 return;
             }
 
-            if (new_speed < 8 || new_speed > 24)
+            if (new_speed < 8 || new_speed > 12)
             {
-                server.send(200, "text/html", getWebPage("/system_settings", "Ошибка: Скорость должна быть между 8 и 24 см/с."));
+                server.send(200, "text/html", getWebPage("/system_settings", "Ошибка: Скорость должна быть между 8 и 12 см/с."));
                 return;
             }
         }
@@ -386,10 +386,10 @@ void updateSensorData()
 {
     static ERA_filter<float> angle_filer(0.1);
     static ERA_filter<float> battery_filer(0.1);
-    battery_level = mapf((battery_filer.filtered(analogRead(PIN_SENSOR_VOLTAGE) * 3.3) / ADC_MAX_VALUE), 2.64, 3.03, 0.0, 100.0);
+    battery_level = mapf((battery_filer.filtered(analogRead(PIN_SENSOR_VOLTAGE) * 3.3) / ADC_MAX_VALUE), 0.69, 0.73, 0.0, 100.0);
     room_temperature = getOverboardTemp();
     light_level = getLightLevel();
-    cable_extension = map(angle_filer.filtered(getRopeLength()), 15.0 + 17.5, travel_distance - 15, 0.0, 100.0);
+    cable_extension = mapf(angle_filer.filtered(getRopeLength()), MIN_LENGTH + 10, travel_distance - 15, 0.0, 100.0);
 }
 
 // ----- Функция setup (инициализация) -----

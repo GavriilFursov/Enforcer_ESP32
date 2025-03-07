@@ -3,7 +3,7 @@
 #include <AccelStepper.h>
 
 const int STEP = 1000;
-const int REDUCTION_RATIO = 20; 
+const int REDUCTION_RATIO = 30; 
 const int STEPS_PER_CM = (STEP * REDUCTION_RATIO) / CIRCUM_LENGTH; // Количество импульсов на см
 
 AccelStepper stepper(AccelStepper::DRIVER, PIN_MOTOR_STEP, PIN_MOTOR_DIR);
@@ -35,12 +35,12 @@ int getSpeedMotor(){
 
 void clearError(){
   digitalWrite(PIN_POWER_RELAY, LOW);
-  delay(1000);
+  delay(500);
   digitalWrite(PIN_POWER_RELAY, HIGH);
   ledUp.turnOff(); 
   ledDown.turnOff();
   ledBody.turnOff();
-  delay(1000);
+  delay(500);
   isCheckError = false;
   isUp = false;
   isDown = false;
@@ -93,41 +93,3 @@ void mainControl() {
     digitalWrite(PIN_POWER_RELAY, LOW);
   }
 }
-
-// bool flagButton = false;
-
-// void motorControl(){
-//   if(!isCheckError){
-//     if(btnUp.hold()){
-//       if(flagButton == false){
-//         stepper.setMaxSpeed((1800 * 1000) / 60);
-//         stepper.moveTo(10000 * 1000);
-//         ledUp.turnOn();
-//         flagButton = true;
-//       }
-//       stepper.run();
-//     }
-//     else if(btnDown.hold()){
-//       if(flagButton == false){
-//         stepper.setMaxSpeed((1800 * 1000) / 60);
-//         stepper.moveTo(-10000 * 1000);
-//         flagButton = true;
-//         ledDown.turnOn();
-//       }
-//       stepper.run();
-//     }
-//     else{
-//       if(flagButton == true){
-//         stepper.setCurrentPosition(stepper.currentPosition());
-//         stepper.move(0);
-//         stepper.setMaxSpeed(0);
-//         flagButton = false;
-//         ledUp.turnOff();
-//         ledDown.turnOff();
-//       }
-//     }
-//   }
-//   else{
-//     clearError();
-//   }
-// }
