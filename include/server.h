@@ -13,8 +13,6 @@ const char *password = "12345678";
 const char *host_name = "piranha_esp32";
 
 // ----- Глобальные переменные для хранения данных -----
-float travel_distance;
-float speed;
 int battery_level;
 float room_temperature;
 float light_level;
@@ -56,14 +54,6 @@ void loadSettings()
                 Serial.println("Failed to parse settings file");
                 return;
             }
-            if (doc.containsKey("travel_distance"))
-            {
-                travel_distance = doc["travel_distance"].as<float>();
-            }
-            if (doc.containsKey("speed"))
-            {
-                speed = doc["speed"].as<float>();
-            }
             if (doc.containsKey("runtime"))
             {
                 startTime = millis() - (doc["runtime"].as<unsigned long>() * 1000);
@@ -80,8 +70,6 @@ void loadSettings()
 void saveSettings()
 {
     DynamicJsonDocument doc(1024);
-    doc["travel_distance"] = travel_distance;
-    doc["speed"] = speed;
     doc["runtime"] = (millis() - startTime) / 1000; // Сохраняем время работы в секундах
     File file = SPIFFS.open(settings_file, "w");
     if (!file)
@@ -211,28 +199,6 @@ String getWebPage(String currentUri, String message = "", bool success = false)
                 htmlPage += R"=====(</p>)=====";
             }
             htmlPage += R"=====(<form action='/save_settings' method='post' class='settings-form'><label for='travel_distance'>Рабочий ход троса (см):</label><br><input type='number' id='travel_distance' name='travel_distance'><br><label for='speed'>Скорость подъема (см/с):</label><br><input type='number' id='speed' name='speed'><br><input type='submit' value='Сохранить'></form><div id='settings_output'>)=====";
-            if (travel_distance > 0)
-            {
-                htmlPage += R"=====(<p>Рабочий ход троса: )=====";
-                htmlPage += String(travel_distance);
-                htmlPage += R"=====( см)=====";
-                if (travel_distance < 100 || travel_distance > 180)
-                {
-                    htmlPage += R"=====( - Введите значение от 100 до 180 см)=====";
-                }
-                htmlPage += R"=====(</p>)=====";
-            }
-            if (speed > 0)
-            {
-                htmlPage += R"=====(<p>Скорость подъема: )=====";
-                htmlPage += String(speed);
-                htmlPage += R"=====( см/с)=====";
-                if (speed < 8 || speed > 12)
-                {
-                    htmlPage += R"=====( - Скорость должна быть между 8 и 12 см/с)=====";
-                }
-                htmlPage += R"=====(</p>)=====";
-            }
 
             // Добавляем отображение времени работы
             unsigned long runtimeSeconds = (millis() - startTime) / 1000;
@@ -364,13 +330,6 @@ void handleSaveSettings()
                 return;
             }
         }
-
-        travel_distance = new_travel_distance;
-        speed = new_speed;
-        Serial.print("Travel distance: ");
-        Serial.println(travel_distance);
-        Serial.print("Speed: ");
-        Serial.println(speed);
         saveSettings();
         server.send(200, "text/html", getWebPage("/system_settings", "Изменения сохранены.", true));
         server.sendHeader("Refresh", "1; url=/");
@@ -386,10 +345,6 @@ void updateSensorData()
 {
     static ERA_filter<float> angle_filer(0.1);
     static ERA_filter<float> battery_filer(0.1);
-    battery_level = mapf((battery_filer.filtered(analogRead(PIN_SENSOR_VOLTAGE) * 3.3) / ADC_MAX_VALUE), 0.69, 0.73, 0.0, 100.0);
-    room_temperature = getOverboardTemp();
-    light_level = getLightLevel();
-    cable_extension = mapf(angle_filer.filtered(getRopeLength()), MIN_LENGTH + 10, travel_distance - 15, 0.0, 100.0);
 }
 
 // ----- Функция setup (инициализация) -----
